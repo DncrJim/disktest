@@ -4,6 +4,8 @@ script for testing incoming sata/sas drives
 not designed for ATA (does not log/export necessary information about drive)
 intended to be run as sudo
 
+NOT YET COMPLETED TO USABLE STATE
+
 runs the following tests in order
 short smart test
 long smart test
