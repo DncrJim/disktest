@@ -1,27 +1,35 @@
-# drivetest
+# disktest
 script for testing incoming sata/sas drives
 
-not designed for ATA (does not log/export necessary information about drive)
-intended to be run as sudo
+##Testing Sequence (checks indicate completed sections)
+[*] smart test - short
+[*] smart test - Long
+[*] badblocks - standard 4 pass r/w
+[ ] zfs r/w test under compression
+  [ ] create single disk zfs pool w/ compression
+  [ ] run standard single pass r/w test
+  [ ] destroy zfs pool
 
-NOT YET COMPLETED TO USABLE STATE
+## Dependencies
+* badblocks (e2fsprogs)
+* smartctl (smartmontools)
+* zfs
 
-runs the following tests in order
-short smart test
-long smart test
-badblocks
-creates zfs pool on disk w/ compression
-  runs standard single pass of write and read tests
-destroys zfs pool
+## Possible Future Development
+[ ] add confirmation messages at beginning of script
+  [ ] confirm device name and if badblocks/zfs is selected, confirm data erasure
+[ ] set up to run program in background
+[ ] allow input of a list of multiple drives
+[ ] flags for automatic enable/disable of individual tests
+[ ] -y flag to automatically agree to all tests
+[ ] -a for all tests (-slbz)
+[ ] -s flag for short smart
+[ ] -l flag for long smart
+[ ] -b flag for badblocks
+[ ] -z flag for zfs
+[ ] -m flag for email updates
+[ ] -e to set email
 
-
-prerequisites
-badblocks
-smartmontools
-zfs
-other?
-
-Possible additions:
-pull variable for list of drives and spawn separate processes?
-verbosity trigger for sending emails?
-trigger for sending errors?
+## Other Notes:
+designed for sata/sas disks only, ATA info reporting is not enabled
+must be run as root
