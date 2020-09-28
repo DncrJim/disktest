@@ -5,6 +5,7 @@ script for testing incoming sata/sas drives
 [*] smart test - short
 [*] smart test - Long
 [*] badblocks - standard 4 pass r/w
+[ ] test/report drive r/w speed
 [ ] zfs r/w test under compression
   [ ] create single disk zfs pool w/ compression
   [ ] run standard single pass r/w test
