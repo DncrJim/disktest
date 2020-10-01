@@ -17,6 +17,9 @@ script for testing incoming sata/sas drives
 * zfs
 
 ## Possible Future Development
+[ ] update "**skipping" and "**starting" inserts to make sure they log correctly
+[ ] confirm r/w test is destructive
+  [ ] add optional r/w test for when drive is in use
 [ ] add confirmation messages at beginning of script
   [ ] confirm device name and if badblocks/zfs is selected, confirm data erasure
 [ ] set up to run program in background

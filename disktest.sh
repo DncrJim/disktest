@@ -40,7 +40,8 @@ DIR=$HOME         #location of save files (directory must exist) "" for / (uncon
 BACKGROUND=0      # 0 = run in foreground, 1 = run in background (not yet implimented)
 RUN_SMART_S=0     # 0 = skip, otherwise run
 RUN_SMART_L=0     # 0 = skip, otherwise run
-RUN_BADBLOCKS=1   # 0 = skip, otherwise run
+RUN_BADBLOCKS=0   # 0 = skip, otherwise run
+SPEED_TEST=1      # 0 = skip, otherwise run
 
 #insert warning for disk overwrite if badblocks = 1
 
@@ -130,9 +131,11 @@ if [[ $RUN_SMART_L == 0 ]]
             if [ SEND_EMAIL == 2 ]; then mail -s "$SDXX drivetest status long test" $EMAIL < $DIR/$SDXX.log; fi
 fi
 if [[ $RUN_BADBLOCKS == 0 ]]
-    then echo "****** Skipping Badblocks ******"; echo ""  | tee -a $DIR/$SDXX.log
+    then echo "****** Skipping Badblocks ******"; echo "" | tee -a $DIR/$SDXX.log
     else
-      echo "****** Starting Badblocks ******"; echo ""
+      echo "****** Starting Badblocks ******"; echo "" | tee -a $DIR/$SDXX.log
+
+#for some reason the output of badblocks is not going to the log file
 
       badblocks -b 4096 -wsv /dev/$SDXX | tee -a $DIR/$SDXX.log
 
@@ -170,6 +173,32 @@ if [[ $RUN_BADBLOCKS == 0 ]]
 
 fi
 
+if [[ $SPEED_TEST == 0 ]]
+
+## dd also does not output results to log
+
+    then echo "****** Skipping r/w Speed Test ******"; echo "" | tee -a $DIR/$SDXX.log
+    else
+      echo "****** Starting r/w Speed Test ******"; echo "" | tee -a $DIR/$SDXX.log
+
+      echo "1G file size speed test"
+      dd if=/dev/zero of=/dev/$SDXX bs=1G count=4 oflag=dsync | tee -a $DIR/$SDXX.log
+      echo ""
+      echo "64M file size speed test"
+      dd if=/dev/zero of=/dev/$SDXX bs=64M count=128 oflag=dsync | tee -a $DIR/$SDXX.log
+      echo ""
+      echo "1M file size speed test"
+      dd if=/dev/zero of=/dev/$SDXX bs=1M count=4k oflag=dsync | tee -a $DIR/$SDXX.log
+      echo ""
+      echo "8K file size speed test"
+      dd if=/dev/zero of=/dev/$SDXX bs=8k count=8k oflag=dsync | tee -a $DIR/$SDXX.log
+      echo ""
+      echo "512B file size speed test"
+      dd if=/dev/zero of=/dev/$SDXX bs=512 count=1000 oflag=dsync | tee -a $DIR/$SDXX.log
 
 
+      if [ SEND_EMAIL == 1 ]; then smartctl -H -l selftest /dev/$SDXX | mail -s "$SDXX drivetest status after badblocks" $EMAIL; fi
+      if [ SEND_EMAIL == 2 ]; then mail -s "$SDXX drivetest status after badblocks" $EMAIL < $DIR/$SDXX.log; fi
+
+fi
 exit 0
