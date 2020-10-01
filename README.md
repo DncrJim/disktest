@@ -17,6 +17,7 @@ script for testing incoming sata/sas drives
 * zfs
 
 ## Possible Future Development
+[ ] insert time stamps in log
 [ ] update "**skipping" and "**starting" inserts to make sure they log correctly
 [ ] confirm r/w test is destructive
   [ ] add optional r/w test for when drive is in use
@@ -25,14 +26,9 @@ script for testing incoming sata/sas drives
 [ ] set up to run program in background
 [ ] allow input of a list of multiple drives
 [ ] flags for automatic enable/disable of individual tests
-[ ] -y flag to automatically agree to all tests
-[ ] -a for all tests (-slbz)
-[ ] -s flag for short smart
-[ ] -l flag for long smart
-[ ] -b flag for badblocks
-[ ] -z flag for zfs
-[ ] -m flag for email updates
-[ ] -e to set email
+  [ ] -y flag to automatically agree to all tests
+  [ ] -a for all tests (-slbz)
+  [ ] -z flag for zfs
 
 ## Other Notes:
 designed for sata/sas disks only, ATA info reporting is not enabled
