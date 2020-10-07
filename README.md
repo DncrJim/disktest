@@ -25,6 +25,7 @@ script for testing incoming sata/sas drives
 [ ] flags for automatic enable/disable of individual tests
   [ ] -b flag for run in background
   [ ] -z flag for zfs
+[ ] implement F3 as an additional test to check for fake size reporting drives?
 
 ### Dependencies
   * smartctl (smartmontools)

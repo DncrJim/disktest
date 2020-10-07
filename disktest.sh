@@ -150,7 +150,7 @@ fi
 if [[ $RUN_BADBLOCKS == 1 ]]
     then echo "****** Starting Badblocks ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
 
-#for some reason the output of badblocks is not going to the log file
+#badblocks goes to different log file until the weirdness can be corrected.
 
     badblocks -b 4096 -wsv /dev/$SDXX |& tee -a $DIR/$SDXX_blocks.log
 
@@ -187,20 +187,22 @@ if [[ $RUN_SPEED_TEST == 1 ]]
     then echo "****** Starting r/w Speed Test ******" |& tee -a $DIR/$SDXX.log
         echo "" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
 
+#need to add time stamp to these so I can see when they started
+
     echo "1G file size speed test" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
               dd if=/dev/zero of=/dev/$SDXX bs=1G count=4 oflag=dsync |& grep "bytes" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
               echo "" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
     echo "64M file size speed test" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
-              dd if=/dev/zero of=/dev/$SDXX bs=64M count=128 oflag=dsync |& grep "bytes" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
+              dd if=/dev/zero of=/dev/$SDXX bs=64M count=64 oflag=dsync |& grep "bytes" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
               echo "" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
     echo "1M file size speed test" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
-              dd if=/dev/zero of=/dev/$SDXX bs=1M count=4k oflag=dsync |& grep "bytes" |& tee -a $DIR/$SDXX.tmp
+              dd if=/dev/zero of=/dev/$SDXX bs=1M count=1k oflag=dsync |& grep "bytes" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
               echo "" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
     echo "8K file size speed test" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
-              dd if=/dev/zero of=/dev/$SDXX bs=8k count=8k oflag=dsync |& grep "bytes" |& tee -a $DIR/$SDXX.tmp
+              dd if=/dev/zero of=/dev/$SDXX bs=8k count=4k oflag=dsync |& grep "bytes" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
               echo "" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
     echo "512B file size speed test" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
-              dd if=/dev/zero of=/dev/$SDXX bs=512 count=1000 oflag=dsync |& grep "bytes" |& tee -a $DIR/$SDXX.tmp
+              dd if=/dev/zero of=/dev/$SDXX bs=512 count=1000 oflag=dsync |& grep "bytes" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
 
         if [ $SEND_EMAIL == 1 ]; then mail -s "$SDXX disktest status after speed test" $EMAIL < $DIR/$SDXX.tmp; fi
         if [ $SEND_EMAIL == 2 ]; then mail -s "$SDXX disktest status after speed test" $EMAIL < $DIR/$SDXX.log; fi
