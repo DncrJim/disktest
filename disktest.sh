@@ -5,13 +5,7 @@
 #requires: smartctl, badblocks, zfs
 #overwrites existing .log file when it starts
 
-#test device name variable
-if [ -z "$1" ] ; then echo "missing argument" ; echo "usage: disktest.sh <sdxx>" ; exit 1 ; fi  #if there's no variable, throw error
-if [[ ${#1} > 4 || ${#1} < 3 ]] ; then echo "incorrect syntax" ; echo "usage: disktest.sh <sdxx>" ; exit 1 ; fi  #if variable $1 is greater than 4 or less than 3 chars, throw error
-if [[ "sd" != "${1:0:2}" ]] ; then echo "incorrect syntax" ; echo "usage: disktest.sh <sdxx>" ; exit 1 ; fi  #if variable $1 does not begin with first two chars "sd", throw error
 
-#pull parameter from command line, assign to variable
-SDXX=$1
 
 #insert other variables (selections may be overwritten by flags below)
 ERASE_IT_ALL="n"  #sets erase to no
@@ -40,8 +34,17 @@ do
     z) echo "you've used an unavailable feature; goodbye." ; exit 1 ;;
     m) SEND_EMAIL=${OPTARG} ;;
     e) EMAIL=${OPTARG} ;;
+    d) DISK=${OPTARG} ;;
   esac
 done
+
+#test device name variable
+if [ -z "$DISK" ] ; then echo "missing argument" ; echo "usage: disktest.sh <sdxx>" ; exit 1 ; fi  #if there's no variable, throw error
+if [[ ${#DISK} > 4 || ${#DISK} < 3 ]] ; then echo "incorrect syntax" ; echo "usage: disktest.sh <sdxx>" ; exit 1 ; fi  #if variable $1 is greater than 4 or less than 3 chars, throw error
+if [[ "sd" != "${DISK:0:2}" ]] ; then echo "incorrect syntax" ; echo "usage: disktest.sh <sdxx>" ; exit 1 ; fi  #if variable $1 does not begin with first two chars "sd", throw error
+
+#pull parameter from command line, assign to variable
+SDXX=$DISK
 
 #test to make sure flags have not created conflict
 if [[ RUN_ALL == 1 ]] ; then
@@ -148,7 +151,7 @@ if [[ $RUN_BADBLOCKS == 1 ]]
 
 #for some reason the output of badblocks is not going to the log file
 
-    badblocks -b 4096 -wsv /dev/$SDXX |& tee -a $DIR/$SDXX.log
+    badblocks -b 4096 -wsv /dev/$SDXX |& tee -a $DIR/$SDXX_blocks.log
 
     echo "******  Badblocks Complete, running Short Test ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
 
