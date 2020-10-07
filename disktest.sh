@@ -5,6 +5,7 @@
 #requires: smartctl, badblocks, zfs
 #overwrites existing .log file when it starts
 
+# it is suggested to run tool once first with just -d <disk> to confirm that the smart tests do not require any additional information
 
 
 #insert other variables (selections may be overwritten by flags below)
@@ -20,12 +21,12 @@ SEND_EMAIL=1      # 0 = no emails, 1 = email status updates, 2 = email full log 
 EMAIL="root"
 
 #import flags and save to variables
-while getopts ybaslbwzm:e: option
+  #flags override settings saved above
+while getopts ybaslbwzm:e:d: option
 do
   case "${option}"
     in
     y) ERASE_IT_ALL="y" ;;
-    b) echo "you've used an unavailable feature; goodbye." ; exit 1 ;;
     a) RUN_ALL=1;;
     s) RUN_SMART_S=1 ;;
     l) RUN_SMART_L=1 ;;
@@ -47,8 +48,8 @@ if [[ "sd" != "${DISK:0:2}" ]] ; then echo "incorrect syntax" ; echo "usage: dis
 SDXX=$DISK
 
 #test to make sure flags have not created conflict
-if [[ RUN_ALL == 1 ]] ; then
-    if [[ RUN_SMART_S == 1 ]] || [[ RUN_SMART_L == 1 ]] || [[ RUN_BADBLOCKS == 1 ]] || [[ RUN_SPEED_TEST == 1 ]] || [[ RUN_ZFS_TEST == 1 ]] ; then
+if [[ $RUN_ALL == 1 ]] ; then
+    if [[ $RUN_SMART_S == 1 ]] || [[ $RUN_SMART_L == 1 ]] || [[ $RUN_BADBLOCKS == 1 ]] || [[ $RUN_SPEED_TEST == 1 ]] || [[ $RUN_ZFS_TEST == 1 ]] ; then
       echo "the chosen flags conflict; goodbye." ; exit 1
     else
       RUN_SMART_S=1 ; RUN_SMART_L=1 ; RUN_BADBLOCKS=1 ; RUN_SPEED_TEST=1 ; RUN_ZFS_TEST=1
@@ -56,7 +57,7 @@ if [[ RUN_ALL == 1 ]] ; then
 fi
 
 #insert warning for disk overwrite if badblocks = 1
-if [[ RUN_BADBLOCKS == 1 ]] || [[ RUN_SPEED_TEST == 1 ]] || [[ RUN_ZFS_TEST == 1 ]]
+if [[ $RUN_BADBLOCKS == 1 ]] || [[ $RUN_SPEED_TEST == 1 ]] || [[ $RUN_ZFS_TEST == 1 ]]
  then
     while [[ $ERASE_IT_ALL != "y" ]]
       do
@@ -80,7 +81,7 @@ echo "******  Status Before Testing ******" |& tee $DIR/$SDXX.log; echo "" |& te
 smartctl -s on -H -i -A -l error -l selftest /dev/$SDXX |& tee -a $DIR/$SDXX.log
 
       #email
-      if [ SEND_EMAIL > 0 ]; then mail -s "$SDXX disktest status initial" $EMAIL < $DIR/$SDXX.log; fi
+      if [ $SEND_EMAIL > 0 ]; then mail -s "$SDXX disktest status initial" $EMAIL < $DIR/$SDXX.log; fi
 
 if [[ $RUN_SMART_S == 1 ]]
     then echo "****** Starting Short Test ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
@@ -106,8 +107,8 @@ if [[ $RUN_SMART_S == 1 ]]
     smartctl -l selftest /dev/$SDXX |& tee -a $DIR/$SDXX.log
 
           #email
-          if [ SEND_EMAIL == 1 ]; then smartctl -H -l selftest /dev/$SDXX | mail -s "$SDXX disktest status after short test" $EMAIL; fi
-          if [ SEND_EMAIL == 2 ]; then mail -s "$SDXX disktest status after short test" $EMAIL < $DIR/$SDXX.log; fi
+          if [ $SEND_EMAIL == 1 ]; then smartctl -H -l selftest /dev/$SDXX | mail -s "$SDXX disktest status after short test" $EMAIL; fi
+          if [ $SEND_EMAIL == 2 ]; then mail -s "$SDXX disktest status after short test" $EMAIL < $DIR/$SDXX.log; fi
     else echo "****** Skipping Short Test ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
 fi
 
@@ -176,8 +177,8 @@ if [[ $RUN_BADBLOCKS == 1 ]]
 
     smartctl -s on -H -i -A -l error -l selftest /dev/$SDXX |& tee -a $DIR/$SDXX.log
 
-          if [ SEND_EMAIL == 1 ]; then smartctl -H -l selftest /dev/$SDXX | mail -s "$SDXX disktest status after badblocks" $EMAIL; fi
-          if [ SEND_EMAIL == 2 ]; then mail -s "$SDXX disktest status after badblocks" $EMAIL < $DIR/$SDXX.log; fi
+          if [ $SEND_EMAIL == 1 ]; then smartctl -H -l selftest /dev/$SDXX | mail -s "$SDXX disktest status after badblocks" $EMAIL; fi
+          if [ $SEND_EMAIL == 2 ]; then mail -s "$SDXX disktest status after badblocks" $EMAIL < $DIR/$SDXX.log; fi
 
     else echo "****** Skipping Badblocks ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
 fi
@@ -201,8 +202,8 @@ if [[ $RUN_SPEED_TEST == 1 ]]
     echo "512B file size speed test" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
               dd if=/dev/zero of=/dev/$SDXX bs=512 count=1000 oflag=dsync |& grep "bytes" |& tee -a $DIR/$SDXX.tmp
 
-        if [ SEND_EMAIL == 1 ]; then mail -s "$SDXX disktest status after speed test" $EMAIL < $DIR/$SDXX.tmp; fi
-        if [ SEND_EMAIL == 2 ]; then mail -s "$SDXX disktest status after speed test" $EMAIL < $DIR/$SDXX.log; fi
+        if [ $SEND_EMAIL == 1 ]; then mail -s "$SDXX disktest status after speed test" $EMAIL < $DIR/$SDXX.tmp; fi
+        if [ $SEND_EMAIL == 2 ]; then mail -s "$SDXX disktest status after speed test" $EMAIL < $DIR/$SDXX.log; fi
 
     rm $DIR/$SDXX.tmp   #clean up
     else echo "****** Skipping r/w Speed Test ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
