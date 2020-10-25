@@ -40,9 +40,9 @@ do
 done
 
 #test device name variable
-if [ -z "$DISK" ] ; then echo "missing argument" ; echo "usage: disktest.sh <sdxx>" ; exit 1 ; fi  #if there's no variable, throw error
-if [[ ${#DISK} > 4 || ${#DISK} < 3 ]] ; then echo "incorrect syntax" ; echo "usage: disktest.sh <sdxx>" ; exit 1 ; fi  #if variable $1 is greater than 4 or less than 3 chars, throw error
-if [[ "sd" != "${DISK:0:2}" ]] ; then echo "incorrect syntax" ; echo "usage: disktest.sh <sdxx>" ; exit 1 ; fi  #if variable $1 does not begin with first two chars "sd", throw error
+if [ -z "$DISK" ] ; then echo "missing argument" ; echo "usage: disktest.sh -d <sdxx>" ; exit 1 ; fi  #if there's no variable, throw error
+if [[ ${#DISK} > 4 || ${#DISK} < 3 ]] ; then echo "incorrect syntax" ; echo "usage: disktest.sh -d <sdxx>" ; exit 1 ; fi  #if variable $1 is greater than 4 or less than 3 chars, throw error
+if [[ "sd" != "${DISK:0:2}" ]] ; then echo "incorrect syntax" ; echo "usage: disktest.sh -d <sdxx>" ; exit 1 ; fi  #if variable $1 does not begin with first two chars "sd", throw error
 
 #pull parameter from command line, assign to variable
 SDXX=$DISK
@@ -68,6 +68,9 @@ if [[ $RUN_BADBLOCKS == 1 ]] || [[ $RUN_SPEED_TEST == 1 ]] || [[ $RUN_ZFS_TEST =
           fi
       done
   fi
+
+#insert code to stop testing if no tests have been selected
+
 
 #insert code to run in background if BACKGROUND = 1
 
@@ -101,7 +104,7 @@ if [[ $RUN_SMART_S == 1 ]]
                 done
 
                 rm $DIR/$SDXX.tmp                           #clean up
-                echo ""; echo "" |& tee -a $DIR/$SDXX.log   #add padding after progress counter
+                echo -e "\r\033[1A\033[1A\033[0K" |& tee -a $DIR/$SDXX.log   #remove progress counter
 
     echo "******  Status After Short Smart Test ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
     smartctl -l selftest /dev/$SDXX |& tee -a $DIR/$SDXX.log
@@ -130,7 +133,7 @@ if [[ $RUN_SMART_L == 1 ]]
                 done
 
                 rm $DIR/$SDXX.tmp                           #clean up
-                echo ""; echo "" |& tee -a $DIR/$SDXX.log   #add padding after progress counter
+                echo -e "\r\033[1A\033[1A\033[0K" |& tee -a $DIR/$SDXX.log   #remove progress counter
 
     echo "******  Status After Long Smart Test ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
     smartctl -l selftest /dev/$SDXX |& tee -a $DIR/$SDXX.log
@@ -171,7 +174,7 @@ if [[ $RUN_BADBLOCKS == 1 ]]
                   done
 
                   rm $DIR/$SDXX.tmp  #clean up
-                  echo ""; echo ""  #add padding after progress counter
+                  echo -e "\r\033[1A\033[1A\033[0K" |& tee -a $DIR/$SDXX.log   #remove progress counter
 
     echo "******  Status After Badblocks ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
 
