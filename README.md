@@ -11,7 +11,7 @@ need to insert descriptions/syntax for flags
 `-a`  Runs all, (-slbw)\
 `-s`  Runs a short test with `smartctl -t short`\
 `-l`  Runs a long test with `smartctl -t long`\
-`-b`  Runs `badblocks`\ 
+`-b`  Runs `badblocks`\
 `-w`  Runs a write speed test\
 `-z`  `.zfs` test (feature unavailble at this time)\
 \
