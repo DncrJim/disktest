@@ -8,7 +8,7 @@ need to insert descriptions/syntax for flags
 
 `-y`  Allows you to erase things\
 \
-`-a`  Runs all, (-slbw)\
+`-a`  Runs all, ('-slbw')\
 `-s`  Runs a short test with `smartctl -t short`\
 `-l`  Runs a long test with `smartctl -t long`\
 `-b`  Runs `badblocks`\
