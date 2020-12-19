@@ -1,7 +1,33 @@
 # disktest
 script for testing incoming sata/sas drives
 
-## Testing Sequence (checks indicate completed sections)
+## Instructions
+
+must be run as sudo
+need to insert descriptions/syntax for flags
+
+-y
+-a
+-s
+-l
+-b
+-w
+-z
+-m
+-e
+-d
+
+### Dependencies
+  * smartctl (smartmontools)
+  * badblocks (e2fsprogs)     .only applies to badblocks test
+  * zfs                       .only applies to zfs test
+  * f3                        .only applies to zfs test
+
+### Other Notes
+designed for sata/sas disks only, ATA info reporting is not enabled
+must be run as root
+
+## Testing Sequence (checks indicate sections with completed programing)
 [x] smart test - short
 [x] smart test - Long
 [x] badblocks - standard 4 pass r/w
@@ -26,13 +52,3 @@ script for testing incoming sata/sas drives
   [ ] -b flag for run in background
   [ ] -z flag for zfs
 [ ] implement F3 as an additional test to check for fake size reporting drives?
-
-### Dependencies
-  * smartctl (smartmontools)
-  * badblocks (e2fsprogs)     .only applies to badblocks test
-  * zfs                       .only applies to zfs test
-  * f3                        .only applies to zfs test
-
-### Other Notes
-designed for sata/sas disks only, ATA info reporting is not enabled
-must be run as root
