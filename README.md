@@ -6,22 +6,24 @@ script for testing incoming sata/sas drives
 must be run as sudo
 need to insert descriptions/syntax for flags
 
--y
--a
--s
--l
--b
--w
--z
--m
--e
--d
+`-y`  Allows you to erase things\
+\
+`-a`  Runs all, (-slbw)\
+`-s`  Runs a short test with `smartctl -t short`\
+`-l`  Runs a long test with `smartctl -t long`\
+`-b`  Runs `badblocks`\ 
+`-w`  Runs a write speed test\
+`-z`  `.zfs` test (feature unavailble at this time)\
+\
+`-m`  Sends email 0 = no emails, 1 (default) = email status updates, 2 = email full log each time\
+`-e`  Sets email address, default `root`\
+`-d`  Sets disk `sdxx`
 
 ### Dependencies
-  * smartctl (smartmontools)
-  * badblocks (e2fsprogs)     .only applies to badblocks test
-  * zfs                       .only applies to zfs test
-  * f3                        .only applies to zfs test
+  * `smartctl` (smartmontools)
+  * `badblocks` (e2fsprogs)     .only applies to badblocks test
+  * `zfs`                       .only applies to zfs test
+  * `f3`                        .only applies to zfs test
 
 ### Other Notes
 designed for sata/sas disks only, ATA info reporting is not enabled
