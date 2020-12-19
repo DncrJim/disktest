@@ -6,9 +6,9 @@ script for testing incoming sata/sas drives
 must be run as sudo
 need to insert descriptions/syntax for flags
 
-`-y`  Allows you to erase things\
+`-y`  Will not promt before erasing data\
 \
-`-a`  Runs all, ('-slbw')\
+`-a`  Runs all, `-slbw` (`z` will be included when available)\
 `-s`  Runs a short test with `smartctl -t short`\
 `-l`  Runs a long test with `smartctl -t long`\
 `-b`  Runs `badblocks`\
