@@ -73,9 +73,7 @@ if [[ $RUN_BADBLOCKS == 1 ]] || [[ $RUN_SPEED_TEST == 1 ]] || [[ $RUN_ZFS_TEST =
 #insert code to stop testing if no tests have been selected
 
 if [[ $RUN_ALL=0 && RUN_SMART_S=0 && $RUN_SMART_L=0 && $RUN_BADBLOCKS=0 && $RUN_SPEED_TEST=0 && RUN_ZFS_TEST=0 ]]
-  then
-     echo "You have not selected a test to run on /dev/$SDXX?" ; then echo "goodbye." ; exit 1
-     done
+  then echo "You have not selected a test to run on /dev/$SDXX?" ; then echo "goodbye." ; exit 1
  fi
 
 #insert code to run in background if BACKGROUND = 1
