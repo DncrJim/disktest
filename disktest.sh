@@ -41,7 +41,7 @@ done
 
 #test device name variable
 if [ -z "$DISK" ] ; then echo "missing argument" ; echo "usage: disktest.sh -d <sdxx>" ; exit 1 ; fi  #if there's no variable, throw error
-if [[ ${#DISK} > 4 || ${#DISK} < 3 ]] ; then echo "incorrect syntax" ; echo "usage: disktest.sh -d <sdxx>" ; exit 1 ; fi  #if variable $1 is greater than 4 or less than 3 chars, throw error
+if [[ ${#DISK} -gt 4 || ${#DISK} -lt 3 ]] ; then echo "incorrect syntax" ; echo "usage: disktest.sh -d <sdxx>" ; exit 1 ; fi  #if variable $1 is greater than 4 or less than 3 chars, throw error
 if [[ "sd" != "${DISK:0:2}" ]] ; then echo "incorrect syntax" ; echo "usage: disktest.sh -d <sdxx>" ; exit 1 ; fi  #if variable $1 does not begin with first two chars "sd", throw error
 
 #pull parameter from command line, assign to variable
@@ -84,7 +84,7 @@ echo "******  Status Before Testing ******" |& tee $DIR/$SDXX.log; echo "" |& te
 smartctl -s on -H -i -A -l error -l selftest /dev/$SDXX |& tee -a $DIR/$SDXX.log
 
       #email
-      if [ $SEND_EMAIL > 0 ]; then mail -s "$SDXX disktest status initial" $EMAIL < $DIR/$SDXX.log; fi
+      if [ $SEND_EMAIL -gt 0 ]; then mail -s "$SDXX disktest status initial" $EMAIL < $DIR/$SDXX.log; fi
 
 if [[ $RUN_SMART_S == 1 ]]
     then echo "****** Starting Short Test ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
