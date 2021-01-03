@@ -78,16 +78,20 @@ if [[ $RUN_BADBLOCKS == 1 ]] || [[ $RUN_SPEED_TEST == 1 ]] || [[ $RUN_ZFS_TEST =
 #######  MAIN BODY OF TESTING
 
 #note: the following line overwrites any existing file
+DATE=$(date)
+echo "******  Testing on $SDXX begain at $DATE ******" |& tee $DIR/$SDXX.log; echo "" |& tee $DIR/$SDXX.log
 echo "******  Status Before Testing ******" |& tee $DIR/$SDXX.log; echo "" |& tee $DIR/$SDXX.log
 
 #activate S.M.A.R.T. just in case it isn't and print initial drive info to log file
 smartctl -s on -H -i -A -l error -l selftest /dev/$SDXX |& tee -a $DIR/$SDXX.log
 
       #email
-      if [ $SEND_EMAIL > 0 ]; then mail -s "$SDXX disktest status initial" $EMAIL < $DIR/$SDXX.log; fi
+      if [ $SEND_EMAIL -gt 0 ]; then mail -s "$SDXX disktest status initial" $EMAIL < $DIR/$SDXX.log; fi
 
 if [[ $RUN_SMART_S == 1 ]]
-    then echo "****** Starting Short Test ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
+   then 
+    DATE=$(date)
+    echo "****** Starting Short Test at $DATE  ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
 
     smartctl -t short /dev/$SDXX |& tee -a $DIR/$SDXX.log
 
@@ -105,7 +109,9 @@ if [[ $RUN_SMART_S == 1 ]]
 
                 rm $DIR/$SDXX.tmp                           #clean up
                 echo -e "\r\033[1A\033[1A\033[0K" |& tee -a $DIR/$SDXX.log   #remove progress counter
-
+                
+    DATE=$(date)
+    echo "******  Short Smart Test Completed at $DATE ******"
     echo "******  Status After Short Smart Test ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
     smartctl -l selftest /dev/$SDXX |& tee -a $DIR/$SDXX.log
 
@@ -116,7 +122,8 @@ if [[ $RUN_SMART_S == 1 ]]
 fi
 
 if [[ $RUN_SMART_L == 1 ]]
-    then echo "****** Starting Long Test ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
+   then DATE=$(date)
+    echo "****** Starting Long Test at $DATE ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
 
     smartctl -t long /dev/$SDXX |& tee -a $DIR/$SDXX.log
 
@@ -134,11 +141,14 @@ if [[ $RUN_SMART_L == 1 ]]
 
                 rm $DIR/$SDXX.tmp                           #clean up
                 echo -e "\r\033[1A\033[1A\033[0K" |& tee -a $DIR/$SDXX.log   #remove progress counter
-
+    DATE=$(date)
+    echo "******  Long Smart Test Completed at $DATE ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
     echo "******  Status After Long Smart Test ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
+    
     smartctl -l selftest /dev/$SDXX |& tee -a $DIR/$SDXX.log
 
-    echo "******  Smart Tests Complete ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
+    DATE=$(date)
+    echo "******  Smart Tests Complete at $DATE ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
 
           #email
           if [ SEND_EMAIL == 1 ]; then smartctl -H -l selftest /dev/$SDXX | mail -s "$SDXX disktest status after long test" $EMAIL; fi
@@ -151,14 +161,15 @@ if [[ $RUN_SMART_L == 1 ]]
 fi
 
 if [[ $RUN_BADBLOCKS == 1 ]]
-    then echo "****** Starting Badblocks ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
+     then DATE=$(date) 
+     echo "****** Starting Badblocks at $DATE ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
 
 #badblocks goes to different log file until the weirdness can be corrected.
 
-    badblocks -b 4096 -wsv /dev/$SDXX |& tee -a $DIR/$SDXX_blocks.log
-
-    echo "******  Badblocks Complete, running Short Test ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
-
+   badblocks -b 4096 -wsv /dev/$SDXX |& tee -a $DIR/$SDXX_blocks.log
+    DATE=$(date)
+    echo "******  Badblocks Complete at $DATE, running Short Test ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
+    
       smartctl -t short /dev/$SDXX |& tee -a $DIR/$SDXX.log
 
                 smartctl -a /dev/$SDXX > $DIR/$SDXX.tmp  #create file for while to watch for test to be complete
@@ -187,24 +198,29 @@ if [[ $RUN_BADBLOCKS == 1 ]]
 fi
 
 if [[ $RUN_SPEED_TEST == 1 ]]
-    then echo "****** Starting r/w Speed Test ******" |& tee -a $DIR/$SDXX.log
-        echo "" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
+      then DATE=$(date) 
+        echo "****** Starting r/w Speed Test at $DATE ******" |& tee -a $DIR/$SDXX.log
 
 #need to add time stamp to these so I can see when they started
 
-    echo "1G file size speed test" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
+    DATE=$(date)
+    echo "1G file size speed test at $DATE" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
               dd if=/dev/zero of=/dev/$SDXX bs=1G count=4 oflag=dsync |& grep "bytes" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
               echo "" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
-    echo "64M file size speed test" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
+    DATE=$(date)
+    echo "64M file size speed test at $DATE" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
               dd if=/dev/zero of=/dev/$SDXX bs=64M count=64 oflag=dsync |& grep "bytes" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
               echo "" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
-    echo "1M file size speed test" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
+    DATE=$(date)
+    echo "1M file size speed test at $DATE" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
               dd if=/dev/zero of=/dev/$SDXX bs=1M count=1k oflag=dsync |& grep "bytes" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
               echo "" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
-    echo "8K file size speed test" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
+    DATE=$(date)
+    echo "8K file size speed test at $DATE" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
               dd if=/dev/zero of=/dev/$SDXX bs=8k count=4k oflag=dsync |& grep "bytes" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
               echo "" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
-    echo "512B file size speed test" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
+    DATE=$(date)
+    echo "512B file size speed test at $DATE" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
               dd if=/dev/zero of=/dev/$SDXX bs=512 count=1000 oflag=dsync |& grep "bytes" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
 
         if [ $SEND_EMAIL == 1 ]; then mail -s "$SDXX disktest status after speed test" $EMAIL < $DIR/$SDXX.tmp; fi
@@ -258,6 +274,7 @@ fi
 
 
 echo "" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log   #add padding
-echo  "****** End of Testing ******" |& tee -a $DIR/$SDXX.log
+DATE=$(date)
+echo  "****** End of Testing at $DATE ******" |& tee -a $DIR/$SDXX.log
 
 exit 0
