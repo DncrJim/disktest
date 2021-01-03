@@ -22,7 +22,7 @@ EMAIL="root"
 
 #import flags and save to variables
   #flags override settings saved above
-while getopts ybaslbwzm:e:d: option
+while getopts ybBaslbwzm:e:d: option
 do
   case "${option}"
     in
@@ -36,6 +36,7 @@ do
     m) SEND_EMAIL=${OPTARG} ;;
     e) EMAIL=${OPTARG} ;;
     d) DISK=${OPTARG} ;;
+    B) BACKGROUND=1 ;;
   esac
 done
 
@@ -74,6 +75,11 @@ if [[ $RUN_BADBLOCKS == 1 ]] || [[ $RUN_SPEED_TEST == 1 ]] || [[ $RUN_ZFS_TEST =
 
 #insert code to run in background if BACKGROUND = 1
 
+if [[ $BACKGROUND == 1 ]]
+  then
+  disown
+  fi
+  
 ######################################
 #######  MAIN BODY OF TESTING
 
