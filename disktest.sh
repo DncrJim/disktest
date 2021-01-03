@@ -22,7 +22,7 @@ EMAIL="root"
 
 #import flags and save to variables
   #flags override settings saved above
-while getopts ybaslbwzm:e:d: option
+while getopts ybBaslbwzm:e:d: option
 do
   case "${option}"
     in
@@ -36,13 +36,14 @@ do
     m) SEND_EMAIL=${OPTARG} ;;
     e) EMAIL=${OPTARG} ;;
     d) DISK=${OPTARG} ;;
-    B) BACKGROUND=1
+    B) BACKGROUND=1 ;;
+    *) echo "Not a vaild flag; goodbye." ; exit 1 ;;
   esac
 done
 
 #test device name variable
 if [ -z "$DISK" ] ; then echo "missing argument" ; echo "usage: disktest.sh -d <sdxx>" ; exit 1 ; fi  #if there's no variable, throw error
-if [[ ${#DISK} > 4 || ${#DISK} < 3 ]] ; then echo "incorrect syntax" ; echo "usage: disktest.sh -d <sdxx>" ; exit 1 ; fi  #if variable $1 is greater than 4 or less than 3 chars, throw error
+if [[ ${#DISK} -gt 4 || ${#DISK} -lt 3 ]] ; then echo "incorrect syntax" ; echo "usage: disktest.sh -d <sdxx>" ; exit 1 ; fi  #if variable $1 is greater than 4 or less than 3 chars, throw error
 if [[ "sd" != "${DISK:0:2}" ]] ; then echo "incorrect syntax" ; echo "usage: disktest.sh -d <sdxx>" ; exit 1 ; fi  #if variable $1 does not begin with first two chars "sd", throw error
 
 #pull parameter from command line, assign to variable
@@ -72,15 +73,15 @@ if [[ $RUN_BADBLOCKS == 1 ]] || [[ $RUN_SPEED_TEST == 1 ]] || [[ $RUN_ZFS_TEST =
 
 #insert code to stop testing if no tests have been selected
 
-if [[ $RUN_ALL == 0 ]] && [[ RUN_SMART_S == 0 ]] && [[$RUN_SMART_L == 0 ]] && [[$RUN_BADBLOCKS == 0 ]] && [[ $RUN_SPEED_TEST == 0 ]] && [[ RUN_ZFS_TEST == 0 ]]
-  then echo "You have not selected a test to run on /dev/$SDXX?" ; then echo "goodbye." ; exit 1
+if [[ $RUN_ALL -eq 0 ]] && [[ $RUN_SMART_S -eq 0 ]] && [[ $RUN_SMART_L -eq 0 ]] && [[ $RUN_BADBLOCKS -eq 0 ]] && [[ $RUN_SPEED_TEST -eq 0 ]] && [[ $RUN_ZFS_TEST -eq 0 ]]
+  then echo "You have not selected a test to run on /dev/$SDXX!" ; echo "goodbye." ; exit 1
  fi
 
 #insert code to run in background if BACKGROUND = 1
 
-if $BACKGROUND=1
+if [[ $BACKGROUND == 1 ]]
   then
-  $cmd disown
+  disown
   fi
 
 
@@ -96,7 +97,7 @@ echo "******  Status Before Testing ******" |& tee $DIR/$SDXX.log; echo "" |& te
 smartctl -s on -H -i -A -l error -l selftest /dev/$SDXX |& tee -a $DIR/$SDXX.log
 
       #email
-      if [ $SEND_EMAIL > 0 ]; then mail -s "$SDXX disktest status initial" $EMAIL < $DIR/$SDXX.log; fi
+      if [ $SEND_EMAIL -gt 0 ]; then mail -s "$SDXX disktest status initial" $EMAIL < $DIR/$SDXX.log; fi
 
 if [[ $RUN_SMART_S == 1 ]]
     then 
@@ -160,8 +161,8 @@ if [[ $RUN_SMART_L == 1 ]]
     echo "******  Smart Tests Complete at $DATE ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
 
           #email
-          if [ SEND_EMAIL == 1 ]; then smartctl -H -l selftest /dev/$SDXX | mail -s "$SDXX disktest status after long test" $EMAIL; fi
-          if [ SEND_EMAIL == 2 ]; then mail -s "$SDXX disktest status after long test" $EMAIL < $DIR/$SDXX.log; fi
+          if [ $SEND_EMAIL == 1 ]; then smartctl -H -l selftest /dev/$SDXX | mail -s "$SDXX disktest status after long test" $EMAIL; fi
+          if [ $SEND_EMAIL == 2 ]; then mail -s "$SDXX disktest status after long test" $EMAIL < $DIR/$SDXX.log; fi
 
 
 
@@ -175,7 +176,7 @@ if [[ $RUN_BADBLOCKS == 1 ]]
 
 #badblocks goes to different log file until the weirdness can be corrected.
 
-    badblocks -b 4096 -wsv /dev/$SDXX |& tee -a $DIR/$SDXX_blocks.log
+    badblocks -b 4096 -wsv /dev/$SDXX |& tee -a $DIR/"$SDXX"_blocks.log
     DATE=$(date)
     echo "******  Badblocks Complete at $DATE, running Short Test ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
 
