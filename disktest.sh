@@ -36,6 +36,7 @@ do
     m) SEND_EMAIL=${OPTARG} ;;
     e) EMAIL=${OPTARG} ;;
     d) DISK=${OPTARG} ;;
+    *) echo "Not a vaild flag; goodbye." ; exit 1 ;;
   esac
 done
 
