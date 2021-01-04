@@ -32,10 +32,11 @@ do
     l) RUN_SMART_L=1 ;;
     b) RUN_BADBLOCKS=1 ;;
     w) RUN_SPEED_TEST=1 ;;
-    z) echo "you've used an unavailable feature; goodbye." ; exit 1 ;;
+    z) echo "zfs testing is not yet implimented; goodbye." ; exit 1 ;;
     m) SEND_EMAIL=${OPTARG} ;;
     e) EMAIL=${OPTARG} ;;
     d) DISK=${OPTARG} ;;
+    *) echo "you've used an invalid flag; goodbye." ; exit 1 ;;
   esac
 done
 
