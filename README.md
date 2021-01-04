@@ -7,7 +7,7 @@ must be run as root
 
 `-y`  Will not prompt before erasing data\
 \
-`-a`  all tests, `-slbw` (`z` will be included when available)\
+`-a`  all tests, `-slbw` (`z` will be added when complete)\
 `-s`  short S.M.A.R.T test `smartctl -t short`\
 `-l`  long S.M.A.R.T test `smartctl -t long`\
 `-b`  `badblocks` 4 passes of write/read\
@@ -29,7 +29,7 @@ must be run as root
 designed for sata/sas disks only, ATA info reporting is not enabled
 
 ## Testing Sequence (checks indicate sections with completed programing)
-- [x] smart test - short
+- [x] smart test - Short
 - [x] smart test - Long
 - [x] badblocks - standard 4 pass r/w
 - [x] test/report drive r/w speed
@@ -54,4 +54,4 @@ designed for sata/sas disks only, ATA info reporting is not enabled
 - [ ] flags for automatic enable/disable of individual tests
   - [ ] -u flag for run in unattended mode (background/disown)
   - [ ] -z flag for zfs
--[ ] implement F3 as an additional test to check for fake size reporting drives?
+- [ ] implement F3 as an additional test to check for fake size reporting drives?
