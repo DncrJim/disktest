@@ -3,18 +3,18 @@ script for testing incoming sata/sas drives
 
 ## Instructions
 
-must be run as sudo
-need to insert descriptions/syntax for flags
+must be run as root
 
-`-y`  Will not promt before erasing data\
+`-y`  Will not prompt before erasing data\
 \
-`-a`  Runs all, `-slbw` (`z` will be included when available)\
-`-s`  Runs a short test with `smartctl -t short`\
-`-l`  Runs a long test with `smartctl -t long`\
-`-b`  Runs `badblocks`\
-`-w`  Runs a write speed test\
-`-z`  `.zfs` test (feature unavailble at this time)\
+`-a`  all tests, `-slbw` (`z` will be included when available)\
+`-s`  short S.M.A.R.T test `smartctl -t short`\
+`-l`  long S.M.A.R.T test `smartctl -t long`\
+`-b`  `badblocks` 4 passes of write/read\
+`-w`  write speed test\
+`-z`  `.zfs` test (not yet implemented)\
 \
+`-u`  unattended mode (not yet implemented)\
 `-m`  Sends email 0 = no emails, 1 (default) = email status updates, 2 = email full log each time\
 `-e`  Sets email address, default `root`\
 `-d`  Sets disk `sdxx`
@@ -27,7 +27,6 @@ need to insert descriptions/syntax for flags
 
 ### Other Notes
 designed for sata/sas disks only, ATA info reporting is not enabled
-must be run as root
 
 ## Testing Sequence (checks indicate sections with completed programing)
 - [x] smart test - short
@@ -43,14 +42,16 @@ must be run as root
 
 ## Possible Future Development
 - [ ] insert time stamps in log
+- [ ] check for dependencies (based on selected flags) before running
 - [ ] update "**skipping" and "**starting" inserts to make sure they log correctly
-- [ ] confirm if r/w speed test is destructive
+- [x] confirm if r/w speed test is destructive
   - [ ] optional: add r/w test for when drive is in use?
 - [ ] add confirmation messages at beginning of script
-  - [ ] confirm device name and if badblocks/zfs is selected, confirm data erasure
+  - [ ] confirm device name and
+  - [x] if badblocks/zfs is selected, confirm data erasure
 - [ ] set up to run program in background
 - [ ] allow input of a list of multiple drives
 - [ ] flags for automatic enable/disable of individual tests
-  - [ ] -b flag for run in background
+  - [ ] -u flag for run in unattended mode (background/disown)
   - [ ] -z flag for zfs
 -[ ] implement F3 as an additional test to check for fake size reporting drives?
