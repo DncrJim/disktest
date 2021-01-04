@@ -143,8 +143,8 @@ if [[ $RUN_SMART_L == 1 ]]
     echo "******  Smart Tests Complete ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
 
           #email
-          if [ SEND_EMAIL == 1 ]; then smartctl -H -l selftest /dev/$SDXX | mail -s "$SDXX disktest status after long test" $EMAIL; fi
-          if [ SEND_EMAIL == 2 ]; then mail -s "$SDXX disktest status after long test" $EMAIL < $DIR/$SDXX.log; fi
+          if [ $SEND_EMAIL == 1 ]; then smartctl -H -l selftest /dev/$SDXX | mail -s "$SDXX disktest status after long test" $EMAIL; fi
+          if [ $SEND_EMAIL == 2 ]; then mail -s "$SDXX disktest status after long test" $EMAIL < $DIR/$SDXX.log; fi
 
 
 
