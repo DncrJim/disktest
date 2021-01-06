@@ -5,18 +5,17 @@
 #requires: smartctl, badblocks, zfs
 #overwrites existing .log file when it starts
 
-# it is suggested to run tool once first with just -d <disk> to confirm that the smart tests do not require any additional information
-
+# it is suggested to run tool once first with just -d <disk> to confirm that the smart tests complete successfully
 
 #insert other variables (selections may be overwritten by flags below)
 ERASE_IT_ALL="n"  #sets erase to no
 DIR=""            #location of save files (directory must exist), $HOME will be root home (I think?), "" for / (unconfirmed)
-BACKGROUND=0      # 0 = run in foreground, 1 = run in background (not yet implimented)
 RUN_SMART_S=0     # 1 = run
 RUN_SMART_L=0     # 1 = run
 RUN_BADBLOCKS=0   # 1 = run
 RUN_SPEED_TEST=0  # 1 = run
 RUN_ZFS_TEST=0    # 1 = run
+UNATTENDED=0      # 0 = run in foreground, 1 = run in unaddended mode (background disowned)(not yet implimented)
 SEND_EMAIL=1      # 0 = no emails, 1 = email status updates, 2 = email full log each time
 EMAIL="root"
 
@@ -33,6 +32,7 @@ do
     b) RUN_BADBLOCKS=1 ;;
     w) RUN_SPEED_TEST=1 ;;
     z) echo "zfs testing is not yet implimented; goodbye." ; exit 1 ;;
+    u) echo "unattended mode not yet implimented; goodbye." ; exit 1 ;;
     m) SEND_EMAIL=${OPTARG} ;;
     e) EMAIL=${OPTARG} ;;
     d) DISK=${OPTARG} ;;
@@ -40,12 +40,15 @@ do
   esac
 done
 
+#check if multiple -d variables provided, insert code to test if running in unattended mode.
+
+
 #test device name variable
 if [ -z "$DISK" ] ; then echo "missing argument" ; echo "usage: disktest.sh -d <sdxx>" ; exit 1 ; fi  #if there's no variable, throw error
 if [[ ${#DISK} > 4 || ${#DISK} < 3 ]] ; then echo "incorrect syntax" ; echo "usage: disktest.sh -d <sdxx>" ; exit 1 ; fi  #if variable $1 is greater than 4 or less than 3 chars, throw error
 if [[ "sd" != "${DISK:0:2}" ]] ; then echo "incorrect syntax" ; echo "usage: disktest.sh -d <sdxx>" ; exit 1 ; fi  #if variable $1 does not begin with first two chars "sd", throw error
 
-#pull parameter from command line, assign to variable
+#set disk variable - this will need to move/change when implimenting multi-disk launch
 SDXX=$DISK
 
 #test to make sure flags have not created conflict
@@ -57,7 +60,7 @@ if [[ $RUN_ALL == 1 ]] ; then
     fi
 fi
 
-#insert warning for disk overwrite if badblocks = 1
+#insert warning for disk overwrite if a flag is selected which can delete data
 if [[ $RUN_BADBLOCKS == 1 ]] || [[ $RUN_SPEED_TEST == 1 ]] || [[ $RUN_ZFS_TEST == 1 ]]
  then
     while [[ $ERASE_IT_ALL != "y" ]]
@@ -65,17 +68,18 @@ if [[ $RUN_BADBLOCKS == 1 ]] || [[ $RUN_SPEED_TEST == 1 ]] || [[ $RUN_ZFS_TEST =
         echo -n "Are you sure you are willing to lose any/all data on /dev/$SDXX? (y/n): "
         read ERASE_IT_ALL
           if [[ $ERASE_IT_ALL == "n" ]] ; then echo "goodbye." ; exit 1
-          elif [[ $ERASE_IT_ALL != "y" ]] ; then echo "I don't understand your response.."
+        elif [[ $ERASE_IT_ALL != "y" ]] ; then echo "sorry, I didn't understand your response.."
           fi
       done
   fi
 
-#insert code to stop testing if no tests have been selected
-if [[ $RUN_SMART_S -eq 0 ]] && [[ $RUN_SMART_L -eq 0 ]] && [[ $RUN_BADBLOCKS -eq 0 ]] && [[ $RUN_SPEED_TEST -eq 0 ]] && [[ $RUN_ZFS_TEST -eq 0 ]]
+#exit if no tests have been selected
+if [[ $RUN_SMART_S == 0 ]] && [[ $RUN_SMART_L == 0 ]] && [[ $RUN_BADBLOCKS == 0 ]] && [[ $RUN_SPEED_TEST == 0 ]] && [[ $RUN_ZFS_TEST == 0 ]]
   then echo "no tests selected; goodbye." ; exit 1
  fi
 
-#insert code to run in background if BACKGROUND = 1
+#insert code to run in unaddended mode if UNATTENDED = 1
+#related: insert code to launch multiple disks concurrently in unaddended mode
 
 ######################################
 #######  MAIN BODY OF TESTING
@@ -146,7 +150,6 @@ if [[ $RUN_SMART_L == 1 ]]
           #email
           if [ $SEND_EMAIL == 1 ]; then smartctl -H -l selftest /dev/$SDXX | mail -s "$SDXX disktest status after long test" $EMAIL; fi
           if [ $SEND_EMAIL == 2 ]; then mail -s "$SDXX disktest status after long test" $EMAIL < $DIR/$SDXX.log; fi
-
 
 
 
