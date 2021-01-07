@@ -41,7 +41,7 @@ designed for sata/sas disks only, ATA info reporting is not enabled
   - [ ] create flag for this?
 
 ## Possible Future Development
-- [ ] insert time stamps in log
+- [x] insert time stamps in log
 - [ ] check for dependencies (based on selected flags) before running
 - [ ] update "**skipping" and "**starting" inserts to make sure they log correctly
 - [x] confirm if r/w speed test is destructive
