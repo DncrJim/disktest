@@ -220,38 +220,34 @@ if [[ $RUN_SPEED_TEST == 1 ]]
     else echo "****** Skipping r/w Speed Test ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
 fi
 
-
+# #################################################
+#
 # if [[ $RUN_ZFS_TEST == 1 ]]
 #     then echo "****** Starting ZFS Compression Test $(date "+%Y.%m.%d %H:%M:%S") ******" |& tee -a $DIR/$SDXX.log
 #         echo "" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
 #
-########################## #zfs script goes here
-#  outline:
-#       create single disk zfs pool w/ compression
-#       run standard single pass r/w test
-#       destroy zfs pool
+# #   create fresh partition on disk
 #
+#    parted /dev/$SDXX mklabel gpt
+#    parted -a opt /dev/$SDXX mkpart primary 0% 100%
 #
-# the below should be able to be reconfigured/written to impliment the zfs test
+# #   create unique single disk zfs pool with compression
 #
-#                 sudo parted /dev/sdxx mklabel gpt
-#                 sudo parted -a opt /dev/sdxx mkpart primary 0% 100%
+#    POOLNAME="zfs_testing_pool_$SDXX"
+#    zpool create -f -o ashift=12 -O logbias=throughput -O compress=lz4 -O dedup=off -O atime=off -O xattr=sa $POOLNAME /dev/$SDXX
+#    zpool export $POOLNAME
+#    sudo zpool import -d /dev/disk/by-id $POOLNAME
+#    sudo chmod -R ugo+rw /$POOLNAME   #unknown usage of slash
 #
-#                 zpool create -f -o ashift=12 -O logbias=throughput -O compress=lz4 -O dedup=off -O atime=off -O xattr=sa <unique_pool_name> /dev/sdxx
-#                 zpool export <unique_pool_name>
-#                 sudo zpool import -d /dev/disk/by-id <unique_pool_name>
-#                 sudo chmod -R ugo+rw /<unique_pool_name>
+# #   fill test - single pass r/w test
 #
-#                 fill test
-#                 f3write /<unique_pool_name> && f3read /<unique_pool_name>
-#                 zpool scrub <unique_pool_name>  #this obviously has to be confirmed that it outputs results (tmp file)
+#     f3write /$POOLNAME && f3read /$POOLNAME
+#     zpool scrub $POOLNAME  #this obviously has to be confirmed that it outputs results (tmp file)
 #
-#                 #nuke drive:
+# #   overwrite to purge zfs from disk:
 #
-#                 dd if=/dev/zero of=/dev/sdXX bs=512 count=10  #clear first sector
-#                 dd if=/dev/zero of=/dev/sdXX bs=512 seek=$(( $(blockdev --getsz /dev/sdXX) - 4096 )) count=1M  #clear last sector?
-#
-# #
+#     dd if=/dev/zero of=/dev/$SDXX bs=512 count=10  #clear first sector
+#     dd if=/dev/zero of=/dev/$SDXX bs=512 seek=$(( $(blockdev --getsz /dev/sdXX) - 4096 )) count=1M  #clear last sector?
 #
 #         if [ SEND_EMAIL == 1 ]; then mail -s "$SDXX disktest status after zfs test" $EMAIL < $DIR/$SDXX.tmp; fi
 #         if [ SEND_EMAIL == 2 ]; then mail -s "$SDXX disktest status after zfs test" $EMAIL < $DIR/$SDXX.log; fi
@@ -260,8 +256,8 @@ fi
 #
 #     else echo "****** Skipping ZFS Compression Test ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
 # fi
-
-
+#
+# #################################################
 
 echo "" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log   #add padding
 echo  "****** End of Testing $(date "+%Y.%m.%d %H:%M:%S") ******" |& tee -a $DIR/$SDXX.log

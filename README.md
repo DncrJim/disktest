@@ -1,5 +1,5 @@
 # disktest
-script for testing incoming sata/sas drives
+script for testing incoming sata/sas disks
 
 ## Instructions
 
@@ -24,6 +24,7 @@ must be run as root
   * `badblocks` (e2fsprogs)     .only applies to badblocks test
   * `zfs`                       .only applies to zfs test
   * `f3`                        .only applies to zfs test
+  * `parted`                    .only applies to zfs test
 
 ### Other Notes
 designed for sata/sas disks only, ATA info reporting is not enabled
@@ -32,7 +33,7 @@ designed for sata/sas disks only, ATA info reporting is not enabled
 - [x] smart test - Short
 - [x] smart test - Long
 - [x] badblocks - standard 4 pass r/w
-- [x] test/report drive r/w speed
+- [x] test/report disk r/w speed
 - [ ] zfs r/w test under compression
   - [ ] create single disk zfs pool w/ compression
   - [ ] run standard single pass r/w test
@@ -45,13 +46,13 @@ designed for sata/sas disks only, ATA info reporting is not enabled
 - [ ] check for dependencies (based on selected flags) before running
 - [ ] update "**skipping" and "**starting" inserts to make sure they log correctly
 - [x] confirm if r/w speed test is destructive
-  - [ ] optional: add r/w test for when drive is in use?
+  - [ ] optional: add r/w test for when disk is in use?
 - [ ] add confirmation messages at beginning of script
   - [ ] confirm device name and
   - [x] if badblocks/zfs is selected, confirm data erasure
 - [ ] set up to run program in background
-- [ ] allow input of a list of multiple drives
+- [ ] allow input of a list of multiple disks
 - [ ] flags for automatic enable/disable of individual tests
   - [ ] -u flag for run in unattended mode (background/disown)
   - [ ] -z flag for zfs
-- [ ] implement F3 as an additional test to check for fake size reporting drives?
+- [ ] add test to check for disks reporting fake size (f3?)
