@@ -85,7 +85,7 @@ if [[ $RUN_SMART_S == 0 ]] && [[ $RUN_SMART_L == 0 ]] && [[ $RUN_BADBLOCKS == 0 
 #######  MAIN BODY OF TESTING
 
 #note: the following line overwrites any existing file
-echo "******  Status Before Testing ******" |& tee $DIR/$SDXX.log; echo "" |& tee $DIR/$SDXX.log
+echo "******  Status Before Testing $(date "+%Y.%m.%d %H:%M:%S") ******" |& tee $DIR/$SDXX.log; echo "" |& tee $DIR/$SDXX.log
 
 #activate S.M.A.R.T. just in case it isn't and print initial drive info to log file
 smartctl -s on -H -i -A -l error -l selftest /dev/$SDXX |& tee -a $DIR/$SDXX.log
@@ -94,7 +94,7 @@ smartctl -s on -H -i -A -l error -l selftest /dev/$SDXX |& tee -a $DIR/$SDXX.log
       if [ $SEND_EMAIL > 0 ]; then mail -s "$SDXX disktest status initial" $EMAIL < $DIR/$SDXX.log; fi
 
 if [[ $RUN_SMART_S == 1 ]]
-    then echo "****** Starting Short Test ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
+    then echo "****** Starting Short Test $(date "+%Y.%m.%d %H:%M:%S") ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
 
     smartctl -t short /dev/$SDXX |& tee -a $DIR/$SDXX.log
 
@@ -123,7 +123,7 @@ if [[ $RUN_SMART_S == 1 ]]
 fi
 
 if [[ $RUN_SMART_L == 1 ]]
-    then echo "****** Starting Long Test ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
+    then echo "****** Starting Long Test $(date "+%Y.%m.%d %H:%M:%S") ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
 
     smartctl -t long /dev/$SDXX |& tee -a $DIR/$SDXX.log
 
@@ -157,7 +157,7 @@ if [[ $RUN_SMART_L == 1 ]]
 fi
 
 if [[ $RUN_BADBLOCKS == 1 ]]
-    then echo "****** Starting Badblocks ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
+    then echo "****** Starting Badblocks $(date "+%Y.%m.%d %H:%M:%S") ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
 
 #badblocks goes to different log file until the weirdness can be corrected.
 
@@ -193,7 +193,7 @@ if [[ $RUN_BADBLOCKS == 1 ]]
 fi
 
 if [[ $RUN_SPEED_TEST == 1 ]]
-    then echo "****** Starting r/w Speed Test ******" |& tee -a $DIR/$SDXX.log
+    then echo "****** Starting r/w Speed Test $(date "+%Y.%m.%d %H:%M:%S") ******" |& tee -a $DIR/$SDXX.log
         echo "" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
 
 #need to add time stamp to these so I can see when they started
@@ -222,7 +222,7 @@ fi
 
 
 # if [[ $RUN_ZFS_TEST == 1 ]]
-#     then echo "****** Starting ZFS Compression Test ******" |& tee -a $DIR/$SDXX.log
+#     then echo "****** Starting ZFS Compression Test $(date "+%Y.%m.%d %H:%M:%S") ******" |& tee -a $DIR/$SDXX.log
 #         echo "" |& tee -a $DIR/$SDXX.log $DIR/$SDXX.tmp
 #
 ########################## #zfs script goes here
@@ -264,6 +264,6 @@ fi
 
 
 echo "" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log   #add padding
-echo  "****** End of Testing ******" |& tee -a $DIR/$SDXX.log
+echo  "****** End of Testing $(date "+%Y.%m.%d %H:%M:%S") ******" |& tee -a $DIR/$SDXX.log
 
 exit 0
