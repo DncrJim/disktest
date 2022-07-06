@@ -36,8 +36,8 @@ do
     u) echo "unattended mode not yet implimented; goodbye." ; exit 1 ;;
     m) SEND_EMAIL=${OPTARG} ;;
     e) EMAIL=${OPTARG} ;;
-    d) DISK=${OPTARG} ;;
     f) FORMAT=1 ;;
+    d) DISK=${OPTARG} ;;
     *) echo "you've used an invalid flag; goodbye." ; exit 1 ;;
   esac
 done
