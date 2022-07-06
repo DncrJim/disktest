@@ -76,7 +76,7 @@ if [[ $RUN_BADBLOCKS == 1 ]] || [[ $RUN_SPEED_TEST == 1 ]] || [[ $RUN_ZFS_TEST =
   fi
 
 #exit if no tests have been selected
-if [[ $RUN_SMART_S == 0 ]] && [[ $RUN_SMART_L == 0 ]] && [[ $RUN_BADBLOCKS == 0 ]] && [[ $RUN_SPEED_TEST == 0 ]] && [[ $RUN_ZFS_TEST == 0 ]]
+if [[ $RUN_SMART_S == 0 ]] && [[ $RUN_SMART_L == 0 ]] && [[ $RUN_BADBLOCKS == 0 ]] && [[ $RUN_SPEED_TEST == 0 ]] && [[ $RUN_ZFS_TEST == 0 ]] && [[ $FORMAT == 0 ]]
   then echo "no tests selected; goodbye." ; exit 1
  fi
 
