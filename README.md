@@ -59,3 +59,4 @@ designed for sata/sas disks only, ATA info reporting is not enabled
   - [ ] -u flag for run in unattended mode (background/disown)
   - [ ] -z flag for zfs
 - [ ] add test to check for disks reporting fake size (f3?)
+- [ ] make it so flags can be entered in any order
