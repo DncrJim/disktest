@@ -37,7 +37,7 @@ do
     m) SEND_EMAIL=${OPTARG} ;;
     e) EMAIL=${OPTARG} ;;
     d) DISK=${OPTARG} ;;
-    f) FORMAT=1
+    f) FORMAT=1 ;;
     *) echo "you've used an invalid flag; goodbye." ; exit 1 ;;
   esac
 done
@@ -63,7 +63,7 @@ if [[ $RUN_ALL == 1 ]] ; then
 fi
 
 #insert warning for disk overwrite if a flag is selected which can delete data
-if [[ $RUN_BADBLOCKS == 1 ]] || [[ $RUN_SPEED_TEST == 1 ]] || [[ $RUN_ZFS_TEST == 1 ]]
+if [[ $RUN_BADBLOCKS == 1 ]] || [[ $RUN_SPEED_TEST == 1 ]] || [[ $RUN_ZFS_TEST == 1 ]] || [[ $FORMAT == 1 ]]
  then
     while [[ $ERASE_IT_ALL != "y" ]]
       do
