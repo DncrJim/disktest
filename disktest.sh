@@ -22,7 +22,7 @@ EMAIL="root"
 
 #import flags and save to variables
   #flags override settings saved above
-while getopts ybaslbwzmf:e:d: option
+while getopts ybaslbwzfm:e:d: option
 do
   case "${option}"
     in
@@ -36,8 +36,8 @@ do
     u) echo "unattended mode not yet implimented; goodbye." ; exit 1 ;;
     m) SEND_EMAIL=${OPTARG} ;;
     e) EMAIL=${OPTARG} ;;
-    d) DISK=${OPTARG} ;;
     f) FORMAT=1 ;;
+    d) DISK=${OPTARG} ;;
     *) echo "you've used an invalid flag; goodbye." ; exit 1 ;;
   esac
 done
@@ -76,7 +76,7 @@ if [[ $RUN_BADBLOCKS == 1 ]] || [[ $RUN_SPEED_TEST == 1 ]] || [[ $RUN_ZFS_TEST =
   fi
 
 #exit if no tests have been selected
-if [[ $RUN_SMART_S == 0 ]] && [[ $RUN_SMART_L == 0 ]] && [[ $RUN_BADBLOCKS == 0 ]] && [[ $RUN_SPEED_TEST == 0 ]] && [[ $RUN_ZFS_TEST == 0 ]]
+if [[ $RUN_SMART_S == 0 ]] && [[ $RUN_SMART_L == 0 ]] && [[ $RUN_BADBLOCKS == 0 ]] && [[ $RUN_SPEED_TEST == 0 ]] && [[ $RUN_ZFS_TEST == 0 ]] && [[ $FORMAT == 0 ]]
   then echo "no tests selected; goodbye." ; exit 1
  fi
 
