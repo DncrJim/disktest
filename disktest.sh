@@ -17,11 +17,12 @@ RUN_SPEED_TEST=0  # 1 = run
 RUN_ZFS_TEST=0    # 1 = run
 UNATTENDED=0      # 0 = run in foreground, 1 = run in unaddended mode (background disowned)(not yet implimented)
 SEND_EMAIL=1      # 0 = no emails, 1 = email status updates, 2 = email full log each time
+FORMAT=0          # 0 = no format, 1 = gpt, single primary part 0% 100%, could add more numbers later for other formats
 EMAIL="root"
 
 #import flags and save to variables
   #flags override settings saved above
-while getopts ybaslbwzm:e:d: option
+while getopts ybaslbwzmf:e:d: option
 do
   case "${option}"
     in
@@ -36,6 +37,7 @@ do
     m) SEND_EMAIL=${OPTARG} ;;
     e) EMAIL=${OPTARG} ;;
     d) DISK=${OPTARG} ;;
+    f) FORMAT=1
     *) echo "you've used an invalid flag; goodbye." ; exit 1 ;;
   esac
 done
@@ -258,6 +260,30 @@ fi
 # fi
 #
 # #################################################
+
+
+if [[ $FORMAT == 1 ]]
+    then echo "****** Starting Disk Formatting $(date "+%Y.%m.%d %H:%M:%S") ******" |& tee -a $DIR/$SDXX.log
+        echo "" |& tee -a $DIR/$SDXX.log
+
+            parted /dev/$SDXX mklabel gpt; S1=$?
+            parted -a opt /dev/$SDXX mkpart primary 0% 100%; S2=$?
+
+            SUCCESS=$(($S1 + $S2))
+            if [ $SUCCESS -ne 0 ]; then
+                  echo "An error has occured while attempting to format the disk: /dev/$SDXX" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
+                  if [ $SEND_EMAIL == 1 ]; then echo "An error has occured while attempting to format the disk: /dev/$SDXX" | mail -s "$SDXX disktest formatting failed" $EMAIL; fi
+
+            else
+                  echo "$SDXX has been successfully formatted" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
+                  if [ $SEND_EMAIL == 1 ]; then echo "$SDXX has been successfully formatted" | mail -s "$SDXX disktest formatting successful" $EMAIL; fi
+            fi
+
+          if [ $SEND_EMAIL == 2 ]; then mail -s "$SDXX disktest status after formatting" $EMAIL < $DIR/$SDXX.log; fi
+
+      else echo "****** Skipping Disk Formatting ******" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log
+  fi
+
 
 echo "" |& tee -a $DIR/$SDXX.log; echo "" |& tee -a $DIR/$SDXX.log   #add padding
 echo  "****** End of Testing $(date "+%Y.%m.%d %H:%M:%S") ******" |& tee -a $DIR/$SDXX.log
