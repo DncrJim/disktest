@@ -20,7 +20,7 @@ must be run as root
 `-f`  Formats disk after testing
 `-d`  Sets disk `sdxx`
 
-full command, run all tests, erase data, and format: `sudo -ayf -d sdxx`
+full command, run all tests, erase data, and format: `sudo /disktest.sh -ayf -d sdxx`
 
 ### Dependencies
   * `smartctl` (smartmontools)
@@ -59,4 +59,4 @@ designed for sata/sas disks only, ATA info reporting is not enabled
   - [ ] -u flag for run in unattended mode (background/disown)
   - [ ] -z flag for zfs
 - [ ] add test to check for disks reporting fake size (f3?)
-- [ ] make it so flags can be entered in any order
+- [ ] have program check for dependencies before running
