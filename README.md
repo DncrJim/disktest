@@ -17,7 +17,7 @@ must be run as root
 `-u`  unattended mode (not yet implemented)\
 `-m`  Sends email 0 = no emails, 1 (default) = email status updates, 2 = email full log each time\
 `-e`  Sets email address, default `root`\
-`-f`  Formats disk after testing
+`-f`  Formats disk after testing\
 `-d`  Sets disk `sdxx`
 
 full command, run all tests, erase data, and format: `sudo /disktest.sh -ayf -d sdxx`
